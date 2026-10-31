@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Expense Tracker</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #eaf2f8;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            max-width: 450px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        h1 {
+            color: #2563eb;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .total {
+            background: #dbeafe;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-size: 22px;
+        }
+
+        li {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .delete {
+            background: red;
+            float: right;
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>My Expense Tracker 💰</h1>
+
+    <p>Manage your daily expenses easily!</p>
+
+    <input type="text" id="name"
+    placeholder="Expense name (Food, Travel...)">
+
+    <input type="number" id="amount"
+    placeholder="Enter amount in ₹">
+
+    <button onclick="addExpense()">
+        Add Expense
+    </button>
+
+    <div class="total">
+        Total Spent: ₹<span id="total">0</span>
+    </div>
+
+    <h3>Expense History</h3>
+
+    <ul id="list"></ul>
+
+</div>
+
+<script>
+
+let expenses = JSON.parse(
+    localStorage.getItem("expenses") || "[]"
+);
+
+function displayExpenses() {
+
+    let list = document.getElementById("list");
+
+    list.innerHTML = "";
+
+    let total = 0;
+
+    expenses.forEach((expense, index) => {
+
+        total += expense.amount;
+
+        let li = document.createElement("li");
+
+        li.textContent =
+            expense.name + " - ₹" + expense.amount;
+
+        let btn = document.createElement("button");
+
+        btn.textContent = "Delete";
+
+        btn.className = "delete";
+
+        btn.onclick = function() {
+            expenses.splice(index, 1);
+            saveExpenses();
+        };
+
+        li.appendChild(btn);
+
+        list.appendChild(li);
+
+    });
+
+    document.getElementById("total").textContent = total;
+
+}
+
+function addExpense() {
+
+    let name = document.getElementById("name").value.trim();
+
+    let amount = Number(document.getElementById("amount").value);
+
+    if (name === "" || !Number.isFinite(amount) || amount <= 0) {
+        alert("Please enter a valid name and amount!");
+        return;
+    }
+
+    expenses.push({
+        name: name,
+        amount: amount
+    });
+
+    saveExpenses();
+
+    document.getElementById("name").value = "";
+    document.getElementById("amount").value = "";
+
+}
+
+function saveExpenses() {
+
+    localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+    );
+
+    displayExpenses();
+
+}
+
+displayExpenses();
+
+</script>
+
+</body>
+</html>
